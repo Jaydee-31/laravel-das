@@ -3,12 +3,19 @@
 namespace App\Livewire;
 
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -17,10 +24,11 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class UserList extends Component implements HasForms, HasTable
+class UserList extends Component implements HasForms, HasTable, HasActions
 {
     use InteractsWithTable;
     use InteractsWithForms;
+    use InteractsWithActions;
 
     public User $user;
     public ?array $data = [];
@@ -30,11 +38,61 @@ class UserList extends Component implements HasForms, HasTable
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function createAction(): Action
     {
-        return $form
-            ->schema([
-                Section::make()
+        return \Filament\Actions\CreateAction::make()
+            ->model(User::class)
+            ->form($this->userForm());
+    }
+//    public function form(Form $form): Form
+//    {
+//        return $form
+//            ->schema($this->userForm())
+//            ->statePath('data');
+//    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query())
+            ->columns([
+                TextColumn::make('name')
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('email')
+                    ->searchable()
+                    ->toggleable(),
+            ])
+            ->filters([
+                // ...
+            ])
+            ->actions([
+                \Filament\Tables\Actions\EditAction::make()
+//                    ->record($this->user)
+                    ->form($this->userForm()),
+                DeleteAction::make()
+            ])
+            ->bulkActions([
+                // ...
+            ])
+            ->headerActions([
+                //
+            ]);
+    }
+    public function create(): void
+    {
+//        dd($this->form->getState());
+        User::create($this->form->getState());
+    }
+    public function render(): View
+    {
+        return view('livewire.user-list');
+    }
+
+    public function userForm(): array {
+        return [
+            Group::make([
+                Group::make()
                     ->schema([
                         FileUpload::make('profile_photo_path')
                             ->directory('profile-photos')
@@ -46,7 +104,7 @@ class UserList extends Component implements HasForms, HasTable
                             ->panelAspectRatio('1:1')
                     ])->columnSpan([ 'xl' => 2]),
 
-                Section::make()
+                Group::make()
                     ->schema([
 //                        TextInput::make('id_number')
 //                            ->label('ID Number')
@@ -82,35 +140,9 @@ class UserList extends Component implements HasForms, HasTable
                             ->columnSpan(2),
                     ])
                     ->columns(2)
-                    ->columnSpan([ 'xl' => 3]),
-            ])->columns([ 'xl' => 5])
-            ->statePath('data');
+                    ->columnSpan([ 'xl' => 3])
+            ])->columns([ 'xl' => 5]),
+        ];
     }
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->query(User::query())
-            ->columns([
-                TextColumn::make('name'),
-            ])
-            ->filters([
-                // ...
-            ])
-            ->actions([
-                // ...
-            ])
-            ->bulkActions([
-                // ...
-            ]);
-    }
-    public function create(): void
-    {
-//        dd($this->form->getState());
-        User::create($this->form->getState());
-    }
-    public function render(): View
-    {
-        return view('livewire.user-list');
-    }
 }
