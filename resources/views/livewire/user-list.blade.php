@@ -8,4 +8,6 @@
     </form>
 
     <x-filament-actions::modals />
+
+    {{ $this->table }}
 </div>

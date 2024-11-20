@@ -9,12 +9,17 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
-class UserList extends Component implements HasForms
+class UserList extends Component implements HasForms, HasTable
 {
+    use InteractsWithTable;
     use InteractsWithForms;
 
     public User $user;
@@ -82,6 +87,23 @@ class UserList extends Component implements HasForms
             ->statePath('data');
     }
 
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(User::query())
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->filters([
+                // ...
+            ])
+            ->actions([
+                // ...
+            ])
+            ->bulkActions([
+                // ...
+            ]);
+    }
     public function create(): void
     {
 //        dd($this->form->getState());
