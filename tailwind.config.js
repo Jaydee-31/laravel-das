@@ -1,5 +1,5 @@
 import preset from './vendor/filament/support/tailwind.config.preset'
-const defaultTheme = require('tailwindcss/defaultTheme')
+import defaultTheme from 'tailwindcss/defaultTheme';
 export default {
     presets: [preset],
     content: [
@@ -15,3 +15,4 @@ export default {
         },
     },
 }
+
