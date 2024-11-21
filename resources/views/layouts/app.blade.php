@@ -1,49 +1,49 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<head>
+    <meta charset="utf-8" />
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta name="application-name" content="{{ config('app.name') }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
+    <title>{{ config('app.name') }}</title>
 
-        <!-- Scripts -->
-        @filamentStyles
-        @vite('resources/css/app.css')
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=poppins:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Styles -->
-        @livewireStyles
-    </head>
-    <body class="font-sans antialiased">
-        <x-banner />
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 
-        <div class="min-h-screen bg-gray-50 text-black/50 dark:bg-neutral-950 dark:text-white/50">
-            @livewire('navigation-menu')
+    @filamentStyles
+    @vite('resources/css/app.css')
+</head>
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-gray-50 dark:bg-neutral-950">
-                    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+<body class="antialiased">
+<div class="min-h-screen bg-gray-50 text-black/50 dark:bg-neutral-950 dark:text-white/50">
+    @livewire('navigation-menu')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
-        </div>
+    <!-- Page Heading -->
+    @if (isset($header))
+        <header class="bg-gray-50 dark:bg-neutral-950">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+                {{ $header }}
+            </div>
+        </header>
+    @endif
 
-        @stack('modals')
+    <!-- Page Content -->
+    <main>
+        {{ $slot }}
+        @livewire('notifications')
+    </main>
+</div>
 
-        @filamentScripts
-        @livewireScripts
-        @vite('resources/js/app.js')
-    </body>
+@filamentScripts
+@vite('resources/js/app.js')
+</body>
 </html>

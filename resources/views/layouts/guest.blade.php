@@ -9,19 +9,23 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=poppins:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+        </style>
 
-        <!-- Styles -->
-        @livewireStyles
+        @filamentStyles
+        @vite('resources/css/app.css')
     </head>
     <body>
         <div class="font-sans bg-gray-50 text-black/50 dark:bg-neutral-950 dark:text-white/50 antialiased">
             {{ $slot }}
         </div>
 
-        @livewireScripts
+        @filamentScripts
+        @vite('resources/js/app.js')
     </body>
 </html>
