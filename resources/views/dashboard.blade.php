@@ -7,7 +7,9 @@
 
     <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <livewire:appointments-calendar/>
+            <livewire:appointments-calendar
+                before-calendar-view="vendor/livewire-calendar/header-action"
+            />
         </div>
     </div>
 </x-app-layout>
