@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Appointment;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Component;
@@ -16,19 +17,17 @@ class AppointmentsCalendar extends LivewireCalendar
 
     public function events() : Collection
     {
-        return collect([
-            [
-                'id' => 1,
-                'title' => 'Breakfast',
-                'description' => 'Pancakes! 🥞',
-                'date' => Carbon::today(),
-            ],
-            [
-                'id' => 2,
-                'title' => 'Meeting with Pamela',
-                'description' => 'Work stuff',
-                'date' => Carbon::tomorrow(),
-            ],
-        ]);
+        return Appointment::query()
+            ->whereDate('schedule_date', '>=', $this->gridStartsAt)
+            ->whereDate('schedule_date', '<=', $this->gridEndsAt)
+            ->get()
+            ->map(function (Appointment $model) {
+                return [
+                    'id' => $model->id,
+                    'title' => $model->name,
+                    'description' => date('H:i A', $model->schedule_time),
+                    'date' => $model->schedule_date,
+                ];
+            });
     }
 }
