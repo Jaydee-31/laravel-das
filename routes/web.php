@@ -21,9 +21,11 @@ Route::middleware([
     Route::get('/vendors', function () {
         return view('livewire.vendors.index');
     })->name('vendors');
+    Route::get('/appointments', function () {
+        return view('livewire.appointments.index');
+    })->name('appointments');
 
     Route::get('/banners', BannerList::class)->name('banners');
     Route::get('/countries', CountryList::class)->name('countries');
     Route::get('/users', \App\Livewire\UserList::class);
-    Route::get('/appointments', \App\Livewire\AppointmentsCalendar::class);
 });
