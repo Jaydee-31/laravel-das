@@ -5,9 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-3">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
+    <div class="">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             @livewire('appointment-list')
         </div>
     </div>
