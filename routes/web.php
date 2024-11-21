@@ -25,4 +25,5 @@ Route::middleware([
     Route::get('/banners', BannerList::class)->name('banners');
     Route::get('/countries', CountryList::class)->name('countries');
     Route::get('/users', \App\Livewire\UserList::class);
+    Route::get('/appointments', \App\Livewire\AppointmentsCalendar::class);
 });

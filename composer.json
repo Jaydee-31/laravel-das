@@ -15,7 +15,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.0",
         "livewire/volt": "^1.6",
-        "omnia-digital/livewire-calendar": "^3.1"
+        "omnia-digital/livewire-calendar": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
