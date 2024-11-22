@@ -24,6 +24,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -74,7 +75,9 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
             ->columns([
                 ImageColumn::make('user.profile_photo_path')
                     ->label('Avatar')
-                    ->circular(),
+                    ->circular()->defaultImageUrl(function (?Model $record) {
+                        return 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->user->name ?? 'User');
+                    }),
                 TextColumn::make('user.name')
                     ->searchable()
                     ->toggleable(),

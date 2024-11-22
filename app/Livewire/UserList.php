@@ -25,6 +25,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -64,8 +65,10 @@ class UserList extends Component implements HasForms, HasTable, HasActions
             ->columns([
                 ImageColumn::make('profile_photo_path')
                     ->label('Avatar')
-                    ->circular(),
-
+                    ->circular()
+                    ->defaultImageUrl(function (?Model $record) {
+                        return 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->name ?? 'User');
+                    }),
                 TextColumn::make('name')
                     ->sortable()
                     ->searchable()
