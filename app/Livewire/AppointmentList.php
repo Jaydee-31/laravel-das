@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Appointment;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -158,8 +159,13 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                             ->preload()
                             ->searchable(),
                         DatePicker::make('schedule_date')
+                            ->minDate(Carbon::today())
+                            ->seconds(false)
+                            ->timezone('Asia/Manila')
+                            ->locale('ph')
                             ->required(),
-                        TimePicker::make('schedule_time'),
+                        TimePicker::make('schedule_time')
+                            ->seconds(false),
                         Select::make('status')
                             ->options([
                                 'pending' => 'Pending',
