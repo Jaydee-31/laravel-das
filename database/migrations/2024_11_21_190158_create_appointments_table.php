@@ -21,7 +21,7 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->date('schedule_date');
             $table->time('schedule_time')->nullable();
-            $table->string('doctor')->nullable();
+            $table->foreignId('doctor_id')->nullable();
             $table->foreignId('added_by_id')->constrained('users');
             $table->timestamps();
         });

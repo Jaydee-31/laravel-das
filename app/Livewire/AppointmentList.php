@@ -21,6 +21,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -82,7 +83,8 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->dateTime('g:i A')
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('doctor')
+                TextColumn::make('doctor.user.name')
+                    ->label('Doctor')
                     ->searchable()
                     ->toggleable()
             ])
@@ -143,7 +145,11 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                         DatePicker::make('schedule_date')
                             ->required(),
                         TimePicker::make('schedule_time'),
-                        TextInput::make('doctor'),
+                        Select::make('doctor_id')
+                            ->relationship('doctor', 'id')
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->user->name}")
+                            ->preload()
+                            ->searchable(),
                     ])
             ])->columns([ 'xl' => 2]),
         ];

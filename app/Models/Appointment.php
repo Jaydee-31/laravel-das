@@ -16,7 +16,7 @@ class Appointment extends Model
         'birthdate',
         'schedule_date',
         'schedule_time',
-        'doctor',
+        'doctor_id',
         'added_by_id',
     ];
 
@@ -32,5 +32,10 @@ class Appointment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by_id',  'id');
+    }
+
+    public function doctor(): BelongsTo
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
     }
 }
