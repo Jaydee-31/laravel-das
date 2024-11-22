@@ -55,8 +55,13 @@ class UserList extends Component implements HasForms, HasTable, HasActions
     {
         return $table
             ->query(User::query())
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('username')
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('email')
@@ -116,6 +121,12 @@ class UserList extends Component implements HasForms, HasTable, HasActions
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
+                        TextInput::make('username')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->maxLength(25)
+                            ->autocomplete(false)
+                            ->columnSpan(1),
                         TextInput::make('email')
                             ->unique(ignoreRecord: true)
                             ->email()
