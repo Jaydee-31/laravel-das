@@ -16,6 +16,8 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -47,7 +49,8 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ->mutateFormDataUsing(function (array $data): array {
                 $data['added_by_id'] = auth()->id();
                 return $data;
-            });
+            })
+            ->createAnother(false);
     }
 //    public function form(Form $form): Form
 //    {
@@ -62,12 +65,22 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ->query(Appointment::query())
             ->defaultSort('created_at', 'desc')
             ->columns([
+
                 TextColumn::make('name')
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('email')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
+                TextColumn::make('status')
+                    ->badge(true)
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'secondary',
+                        'confirmed' => 'primary',
+                        'cancelled' => 'danger',
+                        'completed' => 'success',
+                    }),
                 TextColumn::make('phone')
                     ->searchable()
                     ->toggleable(),
@@ -139,18 +152,28 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
 
                 Group::make()
                     ->schema([
-                        Textarea::make('address')
-                            ->required()
-                            ->maxLength(25),
-                        DatePicker::make('schedule_date')
-                            ->required(),
-                        TimePicker::make('schedule_time'),
                         Select::make('doctor_id')
                             ->relationship('doctor', 'id')
                             ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->user->name}")
                             ->preload()
                             ->searchable(),
-                    ])
+                        DatePicker::make('schedule_date')
+                            ->required(),
+                        TimePicker::make('schedule_time'),
+                        Select::make('status')
+                            ->options([
+                                'pending' => 'Pending',
+                                'confirmed' => 'Confirmed',
+                                'cancelled' => 'Cancelled',
+                                'completed' => 'Completed',
+                            ])
+                            ->default('pending')
+                            ->native(false)
+                    ]),
+                Textarea::make('address')
+                    ->required()
+                    ->maxLength(25)
+                    ->columnSpan(2),
             ])->columns([ 'xl' => 2]),
         ];
     }

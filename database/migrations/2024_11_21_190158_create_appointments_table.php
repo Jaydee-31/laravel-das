@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('birthdate')->nullable();
             $table->date('schedule_date');
             $table->time('schedule_time')->nullable();
+            $table->string('status')->default('pending'); // pending, confirmed, canceled, completed
             $table->foreignId('doctor_id')->nullable();
             $table->foreignId('added_by_id')->constrained('users');
             $table->timestamps();

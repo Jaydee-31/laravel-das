@@ -16,6 +16,7 @@ class Appointment extends Model
         'birthdate',
         'schedule_date',
         'schedule_time',
+        'status',
         'doctor_id',
         'added_by_id',
     ];
