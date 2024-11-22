@@ -16,6 +16,10 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -58,16 +62,24 @@ class UserList extends Component implements HasForms, HasTable, HasActions
             ->query(User::query())
             ->defaultSort('created_at', 'desc')
             ->columns([
+                ImageColumn::make('profile_photo_path')
+                    ->label('Avatar')
+                    ->circular(),
+
                 TextColumn::make('name')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+
                 TextColumn::make('username')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->width('20%'),
                 TextColumn::make('email')
                     ->searchable()
-                    ->toggleable(),
+                    ->sortable(false)
+                    ->iconColor('primary')
+                    ->icon('heroicon-m-envelope'),
             ])
             ->filters([
                 // ...

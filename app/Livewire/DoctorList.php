@@ -18,6 +18,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -47,17 +48,19 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
             ->model(Doctor::class)
             ->form($this->doctorForm())
             ->mutateFormDataUsing(function (array $data): array {
+//
                 $user = User::create([
                     'name' => $data['name'],
                     'username' => $data['username'],
                     'email' => $data['email'],
                     'password' => $data['password'],
+                    'profile_photo_path' => $data['profile_photo_path'],
                 ]);
                 // Add the user ID to the doctor record
                 $data['user_id'] = $user->id;
 
                 // Remove fields not in the doctors table
-                unset($data['name'], $data['username'], $data['email'], $data['password']);
+                unset($data['name'], $data['username'], $data['email'], $data['password'], $data['profile_photo_path']);
 
                 return $data;
             });
@@ -69,12 +72,16 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
             ->query(Doctor::query())
             ->defaultSort('created_at', 'desc')
             ->columns([
+                ImageColumn::make('user.profile_photo_path')
+                    ->label('Avatar')
+                    ->circular(),
                 TextColumn::make('user.name')
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('user.email')
                     ->searchable()
-                    ->toggleable(),
+                    ->iconColor('primary')
+                    ->icon('heroicon-m-envelope'),
                 TextColumn::make('license_number')
                     ->searchable()
                     ->toggleable(),
@@ -90,7 +97,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                     ->mutateRecordDataUsing(function ($record) {
 //                        dd($record);
                         return array_merge(
-                            $record->user ? $record->user->only(['name', 'username', 'email', 'password']) : [],
+                            $record->user ? $record->user->only(['name', 'username', 'email', 'password', 'profile_photo_path']) : [],
                             $record->only(['id', 'user_id', 'license_number', 'specialty'])
                         );
                     })
@@ -101,11 +108,12 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                             'username' => $data['username'],
                             'email' => $data['email'],
                             'password' => $data['password'],
+                            'profile_photo_path' => $data['profile_photo_path'],
                         ]);
 
                         // Update the doctor-specific fields
                         $data['user_id'] = $record->user_id; // Ensure user_id is retained
-                        unset($data['name'], $data['username'],  $data['email'], $data['password']); // Remove non-doctor fields
+                        unset($data['name'], $data['username'],  $data['email'], $data['password'], $data['profile_photo_path']); // Remove non-doctor fields
 
                         return $data;
                     })
