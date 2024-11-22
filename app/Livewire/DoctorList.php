@@ -49,6 +49,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
             ->mutateFormDataUsing(function (array $data): array {
                 $user = User::create([
                     'name' => $data['name'],
+                    'username' => $data['username'],
                     'email' => $data['email'],
                     'password' => $data['password'],
                 ]);
@@ -56,7 +57,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                 $data['user_id'] = $user->id;
 
                 // Remove fields not in the doctors table
-                unset($data['name'], $data['email'], $data['password']);
+                unset($data['name'], $data['username'], $data['email'], $data['password']);
 
                 return $data;
             });
@@ -87,22 +88,24 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
             ->actions([
                 EditAction::make()
                     ->mutateRecordDataUsing(function ($record) {
+//                        dd($record);
                         return array_merge(
-                            $record->user ? $record->user->only(['name', 'email', 'password']) : [],
-                            $record->only(['id', 'license_number', 'specialty'])
+                            $record->user ? $record->user->only(['name', 'username', 'email', 'password']) : [],
+                            $record->only(['id', 'user_id', 'license_number', 'specialty'])
                         );
                     })
                     ->mutateFormDataUsing(function (array $data, $record) {
                         // Update the related user fields
                         $record->user->update([
                             'name' => $data['name'],
+                            'username' => $data['username'],
                             'email' => $data['email'],
                             'password' => $data['password'],
                         ]);
 
                         // Update the doctor-specific fields
                         $data['user_id'] = $record->user_id; // Ensure user_id is retained
-                        unset($data['name'], $data['email'], $data['password']); // Remove non-doctor fields
+                        unset($data['name'], $data['username'],  $data['email'], $data['password']); // Remove non-doctor fields
 
                         return $data;
                     })
@@ -128,6 +131,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
     }
 
     public function doctorForm(): array {
+
         return [
             Group::make([
                 Group::make()
@@ -149,11 +153,16 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
+                        TextInput::make('username')
+                            ->rule(fn ($component) => Rule::unique('users', 'username')
+                                ->ignore($component->getRecord()->user_id ?? null, 'id'))
+                            ->required()
+                            ->maxLength(25)
+                            ->autocomplete(false)
+                            ->columnSpan(1),
                         TextInput::make('email')
-                            ->rule(function ($component) {
-                                return Rule::unique('users', 'email')
-                                    ->ignore($component->getRecord()->user_id, 'id'); // Ignore the current user's ID
-                            })
+                            ->rule(fn ($component) => Rule::unique('users', 'email')
+                                ->ignore($component->getRecord()->user_id ?? null, 'id'))
                             ->email()
                             ->autocomplete(false)
                             ->required()
