@@ -15,8 +15,8 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('countries') }}" :active="request()->routeIs('countries')">
-                        {{ __('Countries') }}
+                    <x-nav-link href="{{ route('users') }}" :active="request()->routeIs('users')">
+                        {{ __('Users') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('vendors') }}" :active="request()->routeIs('vendors')">
                         {{ __('Vendors') }}
@@ -154,8 +154,8 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('countries') }}" :active="request()->routeIs('countries')">
-                {{ __('Countries') }}
+            <x-responsive-nav-link href="{{ route('users') }}" :active="request()->routeIs('users')">
+                {{ __('Users') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('vendors') }}" :active="request()->routeIs('vendors')">
                 {{ __('Vendors') }}

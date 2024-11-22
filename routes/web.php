@@ -25,7 +25,7 @@ Route::middleware([
         return view('livewire.appointments.index');
     })->name('appointments');
 
-    Route::get('/users', \App\Livewire\UserList::class);
+    Route::get('/users', \App\Livewire\UserList::class)->name('users');
     Route::get('/doctors', \App\Livewire\DoctorList::class)->name('doctors');
     Route::get('/countries', CountryList::class)->name('countries');
 });

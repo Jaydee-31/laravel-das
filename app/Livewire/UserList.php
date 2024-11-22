@@ -86,7 +86,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
     }
     public function render(): View
     {
-        return view('livewire.user-list');
+        return view('livewire.users.user-list');
     }
 
     public function userForm(): array {
