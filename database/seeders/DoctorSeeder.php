@@ -18,6 +18,7 @@ class DoctorSeeder extends Seeder
             // Create a user for the doctor
             $user = User::create([
                 'name' => fake()->name(),
+                'username' => fake()->userName(),
                 'email' => fake()->unique()->safeEmail(),
                 'password' => bcrypt('password'), // Default password
             ]);
