@@ -1,6 +1,6 @@
-<nav class="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 shadow-xl">
+<nav class="h-full bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
 
-    <div class="">
+    <div class="flex flex-col h-dvh">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
@@ -17,7 +17,7 @@
         </div>
 
         <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
+        <div class="absolute inset-x-0 bottom-0 border-t border-gray-200 dark:border-gray-600">
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="shrink-0 me-3">
@@ -27,7 +27,6 @@
 
                 <div>
                     <div class="font-medium text-base text-neutral-900 dark:text-gray-200">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
             </div>
 

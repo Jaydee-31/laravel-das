@@ -40,9 +40,9 @@
 <div x-data="{ isSidebarOpen: false }" class="flex h-full w-full">
     <!-- Sidebar -->
     <aside :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed top-0 left-0 h-full w-64 bg-blue-600 text-white transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20">
-        <div class="p-4">
-            <h1 class="text-lg font-bold">My Sidebar</h1>
+           class="fixed top-0 left-0 h-full w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20">
+        <div class="align-middle content-center h-16 bg-white shadow">
+            <h1 class="text-lg font-bold pl-4">My Sidebar</h1>
         </div>
         @livewire('navigation-menu')
     </aside>
