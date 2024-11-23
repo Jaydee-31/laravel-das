@@ -19,33 +19,61 @@
         }
     </style>
 
+    <style>
+        /* Custom overlay for dark tint */
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9;
+        }
+    </style>
+
     @filamentStyles
     @vite('resources/css/app.css')
 </head>
+<body class="h-screen bg-gray-100 overflow-y-hidden">
 
-<body class="antialiased">
-<div class="min-h-screen bg-gray-50 text-black/50 dark:bg-neutral-950 dark:text-white/50">
-    @livewire('navigation-menu')
+<div x-data="{ isSidebarOpen: false }" class="flex h-full w-full">
+    <!-- Sidebar -->
+    <aside :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           class="fixed top-0 left-0 h-full w-64 bg-blue-600 text-white transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20">
+        <div class="p-4">
+            <h1 class="text-lg font-bold">My Sidebar</h1>
+        </div>
+        @livewire('navigation-menu')
+    </aside>
 
-    <!-- Page Heading -->
-    @if (isset($header))
-        <header class="bg-gray-50 dark:bg-neutral-950">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{ $header }}
-            </div>
+    <!-- Overlay (only shown on small screens when sidebar is open) -->
+    <div x-show="isSidebarOpen" x-transition:enter="transition-opacity ease-out duration-300"
+         x-transition:leave="transition-opacity ease-in duration-200" class="overlay lg:hidden"
+         @click="isSidebarOpen = false"></div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ">
+        <header class="fixed w-full h-16 bg-white shadow flex z-[1]  items-center px-4">
+            <button @click="isSidebarOpen = !isSidebarOpen" class="p-2 focus:outline-none lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6h16.5M3.75 12h16.5M3.75 18h16.5" />
+                </svg>
+            </button>
+            <h1 class="ml-4 text-xl font-semibold">Dashboard</h1>
         </header>
-    @endif
 
-    <!-- Page Content -->
-    <main>
-        {{ $slot }}
-        @livewire('notifications')
-    </main>
+        <main class="flex-1 mt-16 overflow-y-auto">
+            {{ $slot }}
+            @livewire('notifications')
+        </main>
+    </div>
 </div>
 
 
 @livewireCalendarScripts
 @filamentScripts
 @vite('resources/js/app.js')
+
 </body>
 </html>
