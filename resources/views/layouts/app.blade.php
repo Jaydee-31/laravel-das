@@ -53,7 +53,7 @@
          @click="isSidebarOpen = false"></div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col ">
+    <div class="flex-1 flex flex-col w-full ">
         <header class="fixed w-full h-16 bg-white shadow flex z-[1]  items-center px-4">
             <button @click="isSidebarOpen = !isSidebarOpen" class="p-2 focus:outline-none lg:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
