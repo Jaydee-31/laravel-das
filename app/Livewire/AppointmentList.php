@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -16,16 +15,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class AppointmentList extends Component implements HasForms, HasTable, HasActions
@@ -77,7 +76,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->toggledHiddenByDefault(),
                 TextColumn::make('status')
                     ->badge(true)
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'pending' => 'secondary',
                         'confirmed' => 'primary',
                         'cancelled' => 'danger',
@@ -107,10 +106,27 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                 // ...
             ])
             ->actions([
-                \Filament\Tables\Actions\EditAction::make()
-    //                    ->record($this->appointment)
-                    ->form($this->appointmentForm()),
-                DeleteAction::make()
+                ActionGroup::make([
+                    EditAction::make()
+                        ->color('primary')
+                        ->form($this->appointmentForm()),
+                    DeleteAction::make(),
+                    \Filament\Tables\Actions\Action::make('sendEmail')
+                        ->label('Send Email')
+                        ->url(function (Appointment $record) {
+//                            dd($record);
+                            $to = $record->email;
+                            $cc = Auth::user()->email;
+                            $bcc = $record->doctor->user->email;
+                            $subject = urlencode('Mail from our Website');
+                            $body = urlencode('Some body text here');
+
+                            return "mailto:$to?cc=$cc&bcc=$bcc&subject=$subject&body=$body";
+                        })
+                        ->color('success')
+                        ->openUrlInNewTab()
+                        ->icon('heroicon-m-envelope'),
+                ]),
             ])
             ->bulkActions([
                 // ...
@@ -119,11 +135,13 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                 //
             ]);
     }
+
     public function create(): void
     {
         dd($this->form->getState());
         Appointment::create($this->form->getState());
     }
+
     public function render(): View
     {
         return view('livewire.appointments.appointment-list');
@@ -156,7 +174,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->schema([
                         Select::make('doctor_id')
                             ->relationship('doctor', 'id')
-                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->user->name}")
+                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->user->name}")
                             ->preload()
                             ->searchable(),
                         DatePicker::make('schedule_date')
@@ -181,7 +199,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->required()
                     ->maxLength(25)
                     ->columnSpan(2),
-            ])->columns([ 'xl' => 2]),
+            ])->columns(['xl' => 2]),
         ];
     }
 
