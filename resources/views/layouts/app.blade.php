@@ -41,8 +41,14 @@
     <!-- Sidebar -->
     <aside :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
            class="fixed top-0 left-0 h-full w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20">
-        <div class="align-middle content-center h-16 bg-white shadow">
-            <h1 class="text-lg font-bold pl-4">My Sidebar</h1>
+        <div class="align-middle content-center h-16 bg-white shadow p-4">
+            <!-- Logo -->
+            <div class="shrink-0 h-full flex items-center">
+                <a href="{{ route('dashboard') }}">
+                    <x-application-mark class="block h-9 w-auto" />
+                </a>
+            </div>
+{{--            <h1 class="text-lg font-bold pl-4">My Sidebar</h1>--}}
         </div>
         @livewire('navigation-menu')
     </aside>
@@ -60,7 +66,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6h16.5M3.75 12h16.5M3.75 18h16.5" />
                 </svg>
             </button>
-            <h1 class="ml-4 text-xl font-semibold">Dashboard</h1>
+            <h1 class="ml-4 text-md font-light">Doctors Appointment System Bethel Baptist Hospital Inc.</h1>
         </header>
 
         <main class="flex-1 mt-16 overflow-y-auto">
