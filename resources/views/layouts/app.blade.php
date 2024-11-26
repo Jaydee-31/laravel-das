@@ -77,7 +77,7 @@
                     <h4 class="font-medium text-lg tracking-wider">{{Carbon\Carbon::now()->toDateString("Y-m-d")}}</h4>
                 </div>
                 <div class="flex h-full justify-center items-center">
-                    <div class="p-2 bg-primary-100 border rounded">
+                    <div class="p-2 bg-primary-100 hover:bg-blue-200 border rounded">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                              stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
