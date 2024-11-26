@@ -95,7 +95,6 @@
     </div>
 </div>
 
-
 @livewireCalendarScripts
 @filamentScripts
 @vite('resources/js/app.js')
