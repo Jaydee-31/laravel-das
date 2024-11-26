@@ -46,6 +46,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
     public function createAction(): Action
     {
         return \Filament\Actions\CreateAction::make()
+            ->label('Add new user')
             ->model(User::class)
             ->form($this->userForm())
             ->createAnother(false);

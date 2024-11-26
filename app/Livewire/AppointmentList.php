@@ -45,6 +45,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
     public function createAction(): Action
     {
         return \Filament\Actions\CreateAction::make()
+            ->label('Create Appointment')
             ->model(Appointment::class)
             ->form($this->appointmentForm())
             ->mutateFormDataUsing(function (array $data): array {

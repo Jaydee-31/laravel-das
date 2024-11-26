@@ -46,6 +46,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
     public function createAction(): Action
     {
         return \Filament\Actions\CreateAction::make()
+            ->label('Add new doctor')
             ->model(Doctor::class)
             ->form($this->doctorForm())
             ->mutateFormDataUsing(function (array $data): array {
