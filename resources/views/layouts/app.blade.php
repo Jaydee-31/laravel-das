@@ -68,7 +68,7 @@
                     </svg>
                 </button>
             </div>
-            <h1 class="flex-grow self-center hidden md:block">Doctors Appointment System Bethel Baptist
+            <h1 class="flex-grow text-base self-center hidden md:block">Doctors Appointment System Bethel Baptist
                 Hospital Inc.</h1>
 
             <a class="flex gap-3 lg:me-4 me-2 cursor-pointer" href="{{ route('dashboard') }}">
