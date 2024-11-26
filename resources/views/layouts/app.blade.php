@@ -88,7 +88,7 @@
             </a>
         </header>
 
-        <main class="flex-1 mt-16 overflow-y-auto">
+        <main class="flex-1 overflow-y-auto">
             {{ $slot }}
             @livewire('notifications')
         </main>
