@@ -40,17 +40,15 @@
 <div x-data="{ isSidebarOpen: false }" class="flex h-full w-full">
     <!-- Sidebar -->
     <aside :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed top-0 left-0 h-full w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20 px-4 border-e">
-        <div class="align-middle content-center h-20 justify-items-start pl-4">
+           class="fixed top-0 left-0 h-full w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20 p-4 flex flex-col border-e">
+        <div class="bg-white h-20 w-full flex items-center justify-center mb-4">
             <!-- Logo -->
-            <div class="">
-                <a href="{{ route('dashboard') }}">
-                    <x-application-mark class="h-9 w-auto" />
-                </a>
-            </div>
-{{--            <h1 class="text-lg font-bold pl-4">My Sidebar</h1>--}}
+            <a href="{{ route('dashboard') }}">
+                <x-application-mark class="h-9 w-auto" />
+            </a>
         </div>
-        @livewire('navigation-menu')
+
+            @livewire('navigation-menu')
     </aside>
 
     <!-- Overlay (only shown on small screens when sidebar is open) -->
@@ -60,7 +58,7 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col w-full ">
-        <header class="fixed w-full h-16 bg-white shadow flex  items-center px-4">
+        <header class="fixed w-full h-16 bg-white border-b flex  items-center px-4">
             <button @click="isSidebarOpen = !isSidebarOpen" class="p-2 focus:outline-none lg:hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6h16.5M3.75 12h16.5M3.75 18h16.5" />
