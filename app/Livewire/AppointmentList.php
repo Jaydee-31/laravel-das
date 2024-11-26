@@ -114,7 +114,6 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     \Filament\Tables\Actions\Action::make('sendEmail')
                         ->label('Send Email')
                         ->url(function (Appointment $record) {
-//                            dd($record);
                             $to = $record->email;
                             $cc = Auth::user()->email;
                             $bcc = $record->doctor->user->email;
