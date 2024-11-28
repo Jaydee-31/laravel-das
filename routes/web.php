@@ -1,13 +1,9 @@
 <?php
 
-use App\Livewire\BannerList;
-use App\Livewire\CountryList;
-use App\Livewire\VendorList;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 Route::get('/', function () {
-    return view('auth/login');
+    return view('welcome');
 });
 
 Route::middleware([
