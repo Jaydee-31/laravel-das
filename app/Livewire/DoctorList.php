@@ -11,13 +11,13 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -50,73 +50,9 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
         return \Filament\Actions\CreateAction::make()
             ->label('Add new doctor')
             ->model(Doctor::class)
-            ->form([
-                Tabs::make('Tabs')
-                    ->tabs([
-                        Tabs\Tab::make('Tab 1')
-                            ->schema(
-                                $this->doctorForm()
-                            ),
-                        Tabs\Tab::make('Tab 2')
-                            ->schema([
-                                Repeater::make('schedules')
-                                    ->relationship()
-                                    ->schema([
-                                        Select::make('day')
-                                            ->options([
-                                                'Monday' => 'Monday',
-                                                'Tuesday' => 'Tuesday',
-                                                'Wednesday' => 'Wednesday',
-                                                'Thursday' => 'Thursday',
-                                                'Friday' => 'Friday',
-                                                'Saturday' => 'Saturday',
-                                                'Sunday' => 'Sunday',
-                                            ])
-                                            ->reactive()
-                                            ->disableOptionWhen(function ($value, $state, Get $get) {
-                                                return collect($get('../*.day'))
-                                                    ->reject(fn($selected) => $selected === $state)
-                                                    ->filter()
-                                                    ->contains($value);
-                                            })
-                                            ->required()
-                                            ->label('Day'),
-
-                                        // Set start time
-                                        TimePicker::make('start_time')
-                                            ->required()
-                                            ->seconds(false)
-                                            ->label('Start Time'),
-
-                                        // Set end time
-                                        TimePicker::make('end_time')
-                                            ->required()
-                                            ->seconds(false)
-                                            ->label('End Time'),
-
-                                        Select::make('week')
-                                            ->multiple()
-                                            ->options([
-                                                '1' => '1st Week',
-                                                '2' => '2nd Week',
-                                                '3' => '3rd Week',
-                                                '4' => '4th Week',
-                                                '5' => '5th Week',
-                                            ])
-                                            ->label('Applicable Weeks')
-                                            ->placeholder('Select weeks')
-                                            ->helperText('Choose which weeks of the month this schedule applies to')
-                                            ->required()
-                                            ->columnSpan(2),
-
-                                        // Toggle for "By Appointment"
-                                        Toggle::make('by_appointment')
-                                            ->label('By Appointment')
-                                            ->default(false),
-                                    ])->defaultItems(3)->cloneable()->columns(3),
-                            ]),
-                    ])
-            ])
+            ->form(
+                $this->doctorForm()
+            )
             ->mutateFormDataUsing(function (array $data): array {
 //
 //                dd($data);
@@ -166,32 +102,46 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                 // ...
             ])
             ->actions([
-                EditAction::make()
-                    ->mutateRecordDataUsing(function ($record) {
+                ActionGroup::make([
+                    EditAction::make('schedule')
+                        ->label('Schedules')
+                        ->icon('heroicon-s-clock')
+                        ->color('success')
+                        ->slideOver()
+                        ->mutateRecordDataUsing(function ($record) {
+                            return $record->schedules->toArray();
+                        })
+                        ->form(
+                            $this->scheduleForm()
+                        ),
+                    EditAction::make()
+                        ->color('primary')
+                        ->mutateRecordDataUsing(function ($record) {
 //                        dd($record);
-                        return array_merge(
-                            $record->user ? $record->user->only(['name', 'username', 'email', 'password', 'profile_photo_path']) : [],
-                            $record->only(['id', 'user_id', 'license_number', 'specialty'])
-                        );
-                    })
-                    ->mutateFormDataUsing(function (array $data, $record) {
-                        // Update the related user fields
-                        $record->user->update([
-                            'name' => $data['name'],
-                            'username' => $data['username'],
-                            'email' => $data['email'],
-                            'password' => $data['password'],
-                            'profile_photo_path' => $data['profile_photo_path'],
-                        ]);
+                            return array_merge(
+                                $record->user ? $record->user->only(['name', 'username', 'email', 'password', 'profile_photo_path']) : [],
+                                $record->only(['id', 'user_id', 'license_number', 'specialty'])
+                            );
+                        })
+                        ->mutateFormDataUsing(function (array $data, $record) {
+                            // Update the related user fields
+                            $record->user->update([
+                                'name' => $data['name'],
+                                'username' => $data['username'],
+                                'email' => $data['email'],
+                                'password' => $data['password'],
+                                'profile_photo_path' => $data['profile_photo_path'],
+                            ]);
 
-                        // Update the doctor-specific fields
-                        $data['user_id'] = $record->user_id; // Ensure user_id is retained
-                        unset($data['name'], $data['username'], $data['email'], $data['password'], $data['profile_photo_path']); // Remove non-doctor fields
+                            // Update the doctor-specific fields
+                            $data['user_id'] = $record->user_id; // Ensure user_id is retained
+                            unset($data['name'], $data['username'], $data['email'], $data['password'], $data['profile_photo_path']); // Remove non-doctor fields
 
-                        return $data;
-                    })
-                    ->form($this->doctorForm()),
-                DeleteAction::make()
+                            return $data;
+                        })
+                        ->form($this->doctorForm()),
+                    DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
                 // ...
@@ -213,7 +163,6 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
 
     public function doctorForm(): array
     {
-
         return [
             Group::make([
                 Group::make()
@@ -280,7 +229,65 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
     public function scheduleForm(): array
     {
         return [
-            //
+            Repeater::make('schedules')
+                ->relationship()
+                ->hiddenLabel()
+                ->addActionLabel('Add schedule')
+                ->schema([
+                    Select::make('day')
+                        ->options([
+                            'Monday' => 'Monday',
+                            'Tuesday' => 'Tuesday',
+                            'Wednesday' => 'Wednesday',
+                            'Thursday' => 'Thursday',
+                            'Friday' => 'Friday',
+                            'Saturday' => 'Saturday',
+                            'Sunday' => 'Sunday',
+                        ])
+                        ->reactive()
+                        ->disableOptionWhen(function ($value, $state, Get $get) {
+                            return collect($get('../*.day'))
+                                ->reject(fn($selected) => $selected === $state)
+                                ->filter()
+                                ->contains($value);
+                        })
+                        ->required()
+                        ->label('Day'),
+
+                    // Set start time
+                    TimePicker::make('start_time')
+                        ->required()
+                        ->seconds(false)
+                        ->label('Start Time'),
+
+                    // Set end time
+                    TimePicker::make('end_time')
+                        ->required()
+                        ->seconds(false)
+                        ->label('End Time'),
+
+                    Select::make('week')
+                        ->multiple()
+                        ->options([
+                            '1' => '1st Week',
+                            '2' => '2nd Week',
+                            '3' => '3rd Week',
+                            '4' => '4th Week',
+                            '5' => '5th Week',
+                        ])
+                        ->label('Applicable Weeks')
+                        ->placeholder('Select weeks')
+                        ->helperText('Choose which weeks of the month this schedule applies to')
+                        ->required()
+                        ->columnSpan(2),
+
+                    // Toggle for "By Appointment"
+                    Toggle::make('by_appointment')
+                        ->label('By Appointment')
+                        ->default(false),
+                ])
+                ->cloneable()
+                ->columns(3),
         ];
     }
 }
