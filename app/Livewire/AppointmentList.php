@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Appointment;
+use App\Models\Schedule;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
@@ -23,6 +25,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -172,10 +175,95 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                 Group::make()
                     ->schema([
                         Select::make('doctor_id')
-                            ->relationship('doctor', 'id')
+                            ->relationship(
+                                name: 'doctor',
+                                titleAttribute: 'id',
+                                modifyQueryUsing: fn(Builder $query) => $query
+                                    ->select('doctors.id', 'doctors.*')
+                                    ->join('users', 'doctors.user_id', '=', 'users.id') // Join with the users table
+                                    ->orderBy('users.name')
+                            )
                             ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->user->name}")
                             ->preload()
+                            ->reactive()
                             ->searchable(),
+                        Select::make('schedule_id')
+                            ->label('Available Schedules')
+                            ->options(function (callable $get) {
+                                $doctorId = $get('doctor_id');
+                                if (!$doctorId) return [];
+
+                                $schedules = Schedule::where('doctor_id', $doctorId)->get();
+                                return $schedules->mapWithKeys(function ($schedule) {
+                                    return [$schedule->id => "{$schedule->day} ({$schedule->start_time}-{$schedule->end_time})"];
+                                });
+                            })
+                            ->reactive()
+                            ->required(),
+                        DatePicker::make('date')
+                            ->label('Appointment Date')
+                            ->required()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set, callable $get) {
+                                $scheduleId = $get('schedule_id');
+                                if (!$scheduleId) return;
+
+                                // Fetch the selected schedule
+                                $schedule = Schedule::find($scheduleId);
+                                if (!$schedule) return;
+
+                                // Check if the selected date matches the schedule's day
+                                $dayOfWeek = Carbon::parse($state)->format('l'); // Day of the week
+                                if ($dayOfWeek !== $schedule->day) {
+                                    Notification::make()
+                                        ->title('Invalid Date')
+                                        ->body('Selected date does not match the schedule day.')
+                                        ->warning()
+                                        ->send();
+                                }
+                            }),
+
+                        Select::make('time')
+                            ->label('Available Times')
+                            ->options(function (callable $get) {
+                                $scheduleId = $get('schedule_id');
+                                $appointmentDate = $get('date');
+
+                                if (!$scheduleId || !$appointmentDate) {
+                                    return [];
+                                }
+
+                                // Fetch the selected schedule
+                                $schedule = Schedule::find($scheduleId);
+                                if (!$schedule) {
+//                                    dd('Schedule not found');
+                                    return [];
+                                }
+
+                                // Break the time range into hourly slots
+                                $startTime = Carbon::parse($schedule->start_time);
+                                $endTime = Carbon::parse($schedule->end_time);
+
+                                $slots = [];
+                                while ($startTime->lt($endTime)) {
+                                    $slotEnd = $startTime->copy()->addHour();
+                                    if ($slotEnd->gt($endTime)) {
+                                        $slotEnd = $endTime;
+                                    }
+
+                                    $slots[$startTime->format('H:i')] = $startTime->format('g:i A') . ' - ' . $slotEnd->format('g:i A');
+                                    $startTime->addHour();
+                                }
+
+                                // Optional: Check for already booked appointments
+//                                $bookedSlots = Appointment::where('schedule_id', $scheduleId)
+//                                    ->where('date', $appointmentDate)
+//                                    ->pluck('time')
+//                                    ->toArray();
+
+                                return $slots;
+                            })
+                            ->required(),
                         DatePicker::make('schedule_date')
                             ->minDate(Carbon::today())
                             ->seconds(false)
