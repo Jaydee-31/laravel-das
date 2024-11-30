@@ -192,6 +192,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                                 'completed' => 'Completed',
                             ])
                             ->default('pending')
+                            ->hidden(!Auth::check())
                             ->native(false)
                     ]),
                 Textarea::make('address')
