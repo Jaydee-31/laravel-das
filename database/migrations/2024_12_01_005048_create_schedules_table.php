@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('doctor_id')->constrained('doctors');
             $table->enum('day', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
+            $table->string('week')->nullable();
             $table->time('start_time');
             $table->time('end_time');
             $table->boolean('by_appointment')->default(false);
