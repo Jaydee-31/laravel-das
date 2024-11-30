@@ -40,7 +40,7 @@
 <div x-data="{ isSidebarOpen: false }" class="flex h-full w-full">
     <!-- Sidebar -->
     <aside :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed top-0 left-0 h-full w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20 p-4 flex flex-col border-e">
+           class="fixed top-0 left-0 h-full w-64 min-w-64 bg-white text-black transform transition-transform duration-300 lg:relative lg:translate-x-0 z-20 p-4 flex flex-col border-e">
         <div class="bg-white h-20 w-full flex items-center justify-center mb-4">
             <!-- Logo -->
             <a href="{{ route('dashboard') }}">
