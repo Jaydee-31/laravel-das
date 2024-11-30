@@ -195,7 +195,13 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
 
                                 $schedules = Schedule::where('doctor_id', $doctorId)->get();
                                 return $schedules->mapWithKeys(function ($schedule) {
-                                    return [$schedule->id => "{$schedule->day} ({$schedule->start_time}-{$schedule->end_time})"];
+                                    return [
+                                        $schedule->id => "{$schedule->day} ("
+                                            . date('h:i A', strtotime($schedule->start_time))
+                                            . " - "
+                                            . date('h:i A', strtotime($schedule->end_time))
+                                            . ")"
+                                    ];
                                 });
                             })
                             ->reactive()
