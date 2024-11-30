@@ -27,7 +27,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -48,26 +47,25 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
     public function createAction(): Action
     {
         return \Filament\Actions\CreateAction::make()
-            ->label('Add new doctor')
             ->model(Doctor::class)
+            ->label('Add new doctor')
+            ->modalHeading(false)
             ->form(
                 $this->doctorForm()
             )
             ->mutateFormDataUsing(function (array $data): array {
-//
-//                dd($data);
                 $user = User::create([
                     'name' => $data['name'],
                     'username' => $data['username'],
                     'email' => $data['email'],
-                    'password' => $data['password'],
+                    'password' => str_replace(' ', '', $data['name']),
                     'profile_photo_path' => $data['profile_photo_path'],
                 ]);
                 // Add the user ID to the doctor record
                 $data['user_id'] = $user->id;
 
                 // Remove fields not in the doctors table
-                unset($data['name'], $data['username'], $data['email'], $data['password'], $data['profile_photo_path']);
+                unset($data['name'], $data['username'], $data['email'], $data['profile_photo_path']);
 
                 return $data;
             });
@@ -117,10 +115,11 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                         ),
                     EditAction::make()
                         ->color('primary')
+                        ->modalHeading(false)
                         ->mutateRecordDataUsing(function ($record) {
 //                        dd($record);
                             return array_merge(
-                                $record->user ? $record->user->only(['name', 'username', 'email', 'password', 'profile_photo_path']) : [],
+                                $record->user ? $record->user->only(['name', 'username', 'email', 'profile_photo_path']) : [],
                                 $record->only(['id', 'user_id', 'license_number', 'specialty'])
                             );
                         })
@@ -130,13 +129,12 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                                 'name' => $data['name'],
                                 'username' => $data['username'],
                                 'email' => $data['email'],
-                                'password' => $data['password'],
                                 'profile_photo_path' => $data['profile_photo_path'],
                             ]);
 
                             // Update the doctor-specific fields
                             $data['user_id'] = $record->user_id; // Ensure user_id is retained
-                            unset($data['name'], $data['username'], $data['email'], $data['password'], $data['profile_photo_path']); // Remove non-doctor fields
+                            unset($data['name'], $data['username'], $data['email'], $data['profile_photo_path']); // Remove non-doctor fields
 
                             return $data;
                         })
@@ -202,24 +200,12 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                             ->columnSpan(1),
                         TextInput::make('license_number')
                             ->label('License Number')
-                            ->required(),
+                            ->required()
+                            ->columnSpan(2),
                         TextInput::make('specialty')
                             ->label('Specialty')
                             ->required()
                             ->columnSpan(2),
-                        TextInput::make('password')
-                            ->password()
-                            ->maxLength(255)
-                            ->dehydrateStateUsing(static fn(null|string $state): null|string => filled($state) ? Hash::make($state) : null,
-                            )
-                            ->dehydrated(static fn(null|string $state): bool => filled($state),
-                            )
-                            ->columnSpan(1),
-                        TextInput::make('passwordConfirmation')
-                            ->same('password')
-                            ->password()
-                            ->dehydrated(false)
-                            ->columnSpan(1),
                     ])
                     ->columns(2)
                     ->columnSpan(['xl' => 3])
