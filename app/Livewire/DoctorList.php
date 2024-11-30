@@ -108,6 +108,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                         ->icon('heroicon-s-clock')
                         ->color('success')
                         ->slideOver()
+                        ->modalHeading(fn($record) => $record->user->name . ' Schedules')
                         ->mutateRecordDataUsing(function ($record) {
                             return $record->schedules->toArray();
                         })
