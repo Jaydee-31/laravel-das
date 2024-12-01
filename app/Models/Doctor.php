@@ -11,6 +11,7 @@ class Doctor extends Model
     protected $fillable = [
         'user_id',
         'license_number',
+        'contact_number',
         'specialty',
     ];
 
@@ -18,7 +19,7 @@ class Doctor extends Model
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
