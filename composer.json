@@ -11,7 +11,6 @@
         "laravel/framework": "^11.9",
         "laravel/jetstream": "^5.3",
         "laravel/sanctum": "^4.0",
-        "laravel/scout": "^10.11",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.0",
         "livewire/volt": "^1.6",
