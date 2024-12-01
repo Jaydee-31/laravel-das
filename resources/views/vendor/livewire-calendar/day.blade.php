@@ -1,4 +1,3 @@
-
 <div
     ondragenter="onLivewireCalendarEventDragEnter(event, '{{ $componentId }}', '{{ $day }}', '{{ $dragAndDropClasses }}');"
     ondragleave="onLivewireCalendarEventDragLeave(event, '{{ $componentId }}', '{{ $day }}', '{{ $dragAndDropClasses }}');"
@@ -31,7 +30,7 @@
             </div>
 
             {{-- Events --}}
-            <div class="p-2 my-2 flex-1 overflow-y-auto">
+            <div class="my-2 flex-1 overflow-y-auto">
                 <div class="grid grid-cols-1 grid-flow-row gap-2">
                     @foreach($events as $event)
                         <div

@@ -26,6 +26,7 @@ class AppointmentsCalendar extends LivewireCalendar
                     'title' => $model->name,
                     'description' => date('g:i', strtotime($model->start_time)) . ' - ' . date('g:i A', strtotime($model->end_time)),
                     'date' => $model->date,
+                    'status' => $model->status, // Add status
                 ];
             });
     }
