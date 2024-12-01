@@ -127,7 +127,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09653454021',
                 'specialty' => 'Adult Cardiology',
                 'schedules' => [
-                    ['day' => 'Saturday', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'By Appointment', 'start_time' => '', 'end_time' => ''],
                 ],
             ],
             [

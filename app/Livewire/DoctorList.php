@@ -82,15 +82,21 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                         return 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->user->name ?? 'User');
                     }),
                 TextColumn::make('user.name')
+                    ->label('Name')
+                    ->sortable()
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('user.email')
+                    ->label('Email')
                     ->searchable()
+                    ->toggleable()
+                    ->toggledHiddenByDefault()
                     ->iconColor('primary')
                     ->icon('heroicon-m-envelope'),
                 TextColumn::make('license_number')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
                 TextColumn::make('specialty')
                     ->searchable()
                     ->toggleable(),
