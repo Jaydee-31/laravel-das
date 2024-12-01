@@ -20,11 +20,12 @@ class AppointmentsCalendar extends LivewireCalendar
             ->whereDate('date', '<=', $this->gridEndsAt)
             ->get()
             ->map(function (Appointment $model) {
+//                dd($model->start_time);
                 return [
                     'id' => $model->id,
                     'title' => $model->name,
-                    'description' => date('H:i A', $model->schedule_time),
-                    'date' => $model->schedule_date,
+                    'description' => date('g:i', strtotime($model->start_time)) . ' - ' . date('g:i A', strtotime($model->end_time)),
+                    'date' => $model->date,
                 ];
             });
     }
