@@ -14,8 +14,10 @@ class Appointment extends Model
         'address',
         'gender',
         'birthdate',
-        'schedule_date',
-        'schedule_time',
+        'schedule_id',
+        'date',
+        'start_time',
+        'end_time',
         'status',
         'doctor_id',
         'added_by_id',
@@ -25,18 +27,24 @@ class Appointment extends Model
     {
         return [
             'birthdate' => 'date',
-            'schedule_date' => 'datetime',
-            'schedule_time' => 'timestamp',
+            'date' => 'datetime',
+//            'start_time' => 'time',
+//            'end_time' => 'time',
         ];
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'added_by_id',  'id');
+        return $this->belongsTo(User::class, 'added_by_id', 'id');
     }
 
     public function doctor(): BelongsTo
     {
         return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+    }
+
+    public function schedule(): BelongsTo
+    {
+        return $this->belongsTo(Schedule::class, 'schedule_id', 'id');
     }
 }

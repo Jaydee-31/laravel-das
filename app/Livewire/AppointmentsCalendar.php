@@ -3,9 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Appointment;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Livewire\Component;
 use Omnia\LivewireCalendar\LivewireCalendar;
 
 class AppointmentsCalendar extends LivewireCalendar
@@ -15,11 +13,11 @@ class AppointmentsCalendar extends LivewireCalendar
 //        return view('livewire.appointments-calendar');
 //    }
 
-    public function events() : Collection
+    public function events(): Collection
     {
         return Appointment::query()
-            ->whereDate('schedule_date', '>=', $this->gridStartsAt)
-            ->whereDate('schedule_date', '<=', $this->gridEndsAt)
+            ->whereDate('date', '>=', $this->gridStartsAt)
+            ->whereDate('date', '<=', $this->gridEndsAt)
             ->get()
             ->map(function (Appointment $model) {
                 return [

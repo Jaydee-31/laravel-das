@@ -13,7 +13,6 @@ use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -51,7 +50,9 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ->model(Appointment::class)
             ->form($this->appointmentForm())
             ->mutateFormDataUsing(function (array $data): array {
+                $data['end_time'] = Carbon::parse($data['start_time'])->addHour();
                 $data['added_by_id'] = auth()->id();
+
                 return $data;
             })
             ->createAnother(false);
@@ -92,11 +93,11 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->sortable()
                     ->toggleable()
                     ->toggledHiddenByDefault(),
-                TextColumn::make('schedule_date')
+                TextColumn::make('date')
                     ->dateTime('F d, Y')
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('schedule_time')
+                TextColumn::make('start_time')
                     ->dateTime('g:i A')
                     ->sortable()
                     ->toggleable(),
@@ -111,6 +112,11 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ->actions([
                 ActionGroup::make([
                     EditAction::make()
+                        ->mutateRecordDataUsing(function ($record) {
+                            $data = $record->toArray();
+
+                            return $data;
+                        })
                         ->color('primary')
                         ->form($this->appointmentForm()),
                     DeleteAction::make(),
@@ -209,6 +215,10 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                         DatePicker::make('date')
                             ->label('Appointment Date')
                             ->required()
+                            ->minDate(Carbon::today())
+                            ->seconds(false)
+                            ->timezone('Asia/Manila')
+                            ->locale('ph')
                             ->reactive()
                             ->afterStateUpdated(function ($state, $set, callable $get) {
                                 $scheduleId = $get('schedule_id');
@@ -219,7 +229,8 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                                 if (!$schedule) return;
 
                                 // Check if the selected date matches the schedule's day
-                                $dayOfWeek = Carbon::parse($state)->format('l'); // Day of the week
+                                $dayOfWeek = Carbon::parse($state)->format('l');
+
                                 if ($dayOfWeek !== $schedule->day) {
                                     Notification::make()
                                         ->title('Invalid Date')
@@ -229,7 +240,8 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                                 }
                             }),
 
-                        Select::make('time')
+                        Select::make('start_time')
+                            ->reactive()
                             ->label('Available Times')
                             ->options(function (callable $get) {
                                 $scheduleId = $get('schedule_id');
@@ -257,27 +269,13 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                                         $slotEnd = $endTime;
                                     }
 
-                                    $slots[$startTime->format('H:i')] = $startTime->format('g:i A') . ' - ' . $slotEnd->format('g:i A');
+                                    $slots[$startTime->toTimeString()] = $startTime->format('g:i A') . ' - ' . $slotEnd->format('g:i A');
                                     $startTime->addHour();
                                 }
-
-                                // Optional: Check for already booked appointments
-//                                $bookedSlots = Appointment::where('schedule_id', $scheduleId)
-//                                    ->where('date', $appointmentDate)
-//                                    ->pluck('time')
-//                                    ->toArray();
-
+//                                dd($slots);
                                 return $slots;
                             })
                             ->required(),
-                        DatePicker::make('schedule_date')
-                            ->minDate(Carbon::today())
-                            ->seconds(false)
-                            ->timezone('Asia/Manila')
-                            ->locale('ph')
-                            ->required(),
-                        TimePicker::make('schedule_time')
-                            ->seconds(false),
                         Select::make('status')
                             ->options([
                                 'pending' => 'Pending',
