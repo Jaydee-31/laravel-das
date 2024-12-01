@@ -6,20 +6,13 @@ use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -48,6 +41,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
         return \Filament\Actions\CreateAction::make()
             ->label('Add new user')
             ->model(User::class)
+            ->modalHeading(false)
             ->form($this->userForm())
             ->createAnother(false);
     }
@@ -90,7 +84,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
             ])
             ->actions([
                 \Filament\Tables\Actions\EditAction::make()
-//                    ->record($this->user)
+                    ->modalHeading(false)
                     ->form($this->userForm()),
                 DeleteAction::make()
             ])
@@ -101,17 +95,20 @@ class UserList extends Component implements HasForms, HasTable, HasActions
                 //
             ]);
     }
+
     public function create(): void
     {
 //        dd($this->form->getState());
         User::create($this->form->getState());
     }
+
     public function render(): View
     {
         return view('livewire.users.user-list');
     }
 
-    public function userForm(): array {
+    public function userForm(): array
+    {
         return [
             Group::make([
                 Group::make()
@@ -124,7 +121,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
                             ->imageCropAspectRatio('1:1')
                             ->maxSize(2048)
                             ->panelAspectRatio('1:1')
-                    ])->columnSpan([ 'xl' => 2]),
+                    ])->columnSpan(['xl' => 2]),
 
                 Group::make()
                     ->schema([
@@ -134,7 +131,7 @@ class UserList extends Component implements HasForms, HasTable, HasActions
 //                            ->required()
 //                            ->maxLength(25),
                         TextInput::make('name')
-                            ->dehydrateStateUsing(fn ($state) => ucwords($state))
+                            ->dehydrateStateUsing(fn($state) => ucwords($state))
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(2),
@@ -154,11 +151,9 @@ class UserList extends Component implements HasForms, HasTable, HasActions
                         TextInput::make('password')
                             ->password()
                             ->maxLength(255)
-                            ->dehydrateStateUsing(static fn (null|string $state): null|string =>
-                            filled($state) ? Hash::make($state) : null,
+                            ->dehydrateStateUsing(static fn(null|string $state): null|string => filled($state) ? Hash::make($state) : null,
                             )
-                            ->dehydrated(static fn (null|string $state): bool =>
-                            filled($state),
+                            ->dehydrated(static fn(null|string $state): bool => filled($state),
                             )
                             ->columnSpan(2),
                         TextInput::make('passwordConfirmation')
@@ -168,8 +163,8 @@ class UserList extends Component implements HasForms, HasTable, HasActions
                             ->columnSpan(2),
                     ])
                     ->columns(2)
-                    ->columnSpan([ 'xl' => 3])
-            ])->columns([ 'xl' => 5]),
+                    ->columnSpan(['xl' => 3])
+            ])->columns(['xl' => 5]),
         ];
     }
 
