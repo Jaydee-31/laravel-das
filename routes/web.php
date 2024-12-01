@@ -14,9 +14,6 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-    Route::get('/vendors', function () {
-        return view('livewire.vendors.index');
-    })->name('vendors');
 
     Route::get('/users', \App\Livewire\UserList::class)->name('users');
     Route::get('/doctors', \App\Livewire\DoctorList::class)->name('doctors');
