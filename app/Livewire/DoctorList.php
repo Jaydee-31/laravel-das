@@ -13,7 +13,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Get;
@@ -203,7 +202,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                             ->required()
                             ->columnSpan(2),
                         TextInput::make('specialty')
-                            ->label('Specialty')
+                            ->label('Specialization')
                             ->required()
                             ->columnSpan(2),
                     ])
@@ -253,25 +252,25 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                         ->seconds(false)
                         ->label('End Time'),
 
-                    Select::make('week')
-                        ->multiple()
-                        ->options([
-                            '1' => '1st Week',
-                            '2' => '2nd Week',
-                            '3' => '3rd Week',
-                            '4' => '4th Week',
-                            '5' => '5th Week',
-                        ])
-                        ->label('Applicable Weeks')
-                        ->placeholder('Select weeks')
-                        ->helperText('Choose which weeks of the month this schedule applies to')
-                        ->required()
-                        ->columnSpan(2),
-
-                    // Toggle for "By Appointment"
-                    Toggle::make('by_appointment')
-                        ->label('By Appointment')
-                        ->default(false),
+//                    Select::make('week')
+//                        ->multiple()
+//                        ->options([
+//                            '1' => '1st Week',
+//                            '2' => '2nd Week',
+//                            '3' => '3rd Week',
+//                            '4' => '4th Week',
+//                            '5' => '5th Week',
+//                        ])
+//                        ->label('Applicable Weeks')
+//                        ->placeholder('Select weeks')
+//                        ->helperText('Choose which weeks of the month this schedule applies to')
+//                        ->required()
+//                        ->columnSpan(2),
+//
+//                    // Toggle for "By Appointment"
+//                    Toggle::make('by_appointment')
+//                        ->label('By Appointment')
+//                        ->default(false),
                 ])
                 ->cloneable()
                 ->columns(3),
