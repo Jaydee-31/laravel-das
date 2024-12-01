@@ -111,6 +111,19 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ])
             ->actions([
                 ActionGroup::make([
+                    \Filament\Tables\Actions\Action::make('sendEmail')
+                        ->label('Send Email')
+                        ->url(function (Appointment $record) {
+                            $to = $record->email;
+                            $cc = Auth::user()->email;
+                            $bcc = $record->doctor->user->email;
+                            $subject = 'RESULTS: ';
+                            $body = '';
+
+                            return "mailto:$to?cc=$cc&bcc=$bcc&subject=$subject&body=$body";
+                        })
+                        ->color('success')
+                        ->icon('heroicon-m-envelope'),
                     EditAction::make()
                         ->mutateRecordDataUsing(function ($record) {
                             $data = $record->toArray();
@@ -120,20 +133,6 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                         ->color('primary')
                         ->form($this->appointmentForm()),
                     DeleteAction::make(),
-                    \Filament\Tables\Actions\Action::make('sendEmail')
-                        ->label('Send Email')
-                        ->url(function (Appointment $record) {
-                            $to = $record->email;
-                            $cc = Auth::user()->email;
-                            $bcc = $record->doctor->user->email;
-                            $subject = urlencode('Mail from our Website');
-                            $body = urlencode('Some body text here');
-
-                            return "mailto:$to?cc=$cc&bcc=$bcc&subject=$subject&body=$body";
-                        })
-                        ->color('success')
-                        ->openUrlInNewTab()
-                        ->icon('heroicon-m-envelope'),
                 ]),
             ])
             ->bulkActions([
