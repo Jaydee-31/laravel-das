@@ -241,7 +241,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
 
                         Select::make('start_time')
                             ->reactive()
-                            ->label('Available Times')
+                            ->label('Available Slots')
                             ->options(function (callable $get) {
                                 $scheduleId = $get('schedule_id');
                                 $appointmentDate = $get('date');
