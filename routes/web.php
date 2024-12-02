@@ -18,4 +18,5 @@ Route::middleware([
     Route::get('/users', \App\Livewire\UserList::class)->name('users');
     Route::get('/doctors', \App\Livewire\DoctorList::class)->name('doctors');
     Route::get('/appointments', \App\Livewire\AppointmentList::class)->name('appointments');
+    Route::get('appointment/{appointment}', \App\Livewire\ViewAppointment::class);
 });
