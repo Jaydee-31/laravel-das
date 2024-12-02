@@ -15,10 +15,14 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Notifications\Notification;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -29,12 +33,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class AppointmentList extends Component implements HasForms, HasTable, HasActions
+class AppointmentList extends Component implements HasForms, HasTable, HasActions, HasInfolists
 {
+
+    use InteractsWithInfolists;
     use InteractsWithTable;
     use InteractsWithForms;
     use InteractsWithActions;
 
+    protected string $view = 'livewire.appointments.view-appointment';
     public Appointment $appointment;
     public ?array $data = [];
 
@@ -68,6 +75,8 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
     {
         return $table
             ->query(Appointment::query())
+            ->recordUrl(null)
+            ->recordAction(ViewAction::class)
             ->defaultSort('created_at', 'desc')
             ->columns([
 
@@ -127,12 +136,19 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     EditAction::make()
                         ->mutateRecordDataUsing(function ($record) {
                             $data = $record->toArray();
-
                             return $data;
                         })
                         ->color('primary')
                         ->form($this->appointmentForm()),
                     DeleteAction::make(),
+                    ViewAction::make()
+                        ->modalHeading('Appointment Details')
+                        ->form($this->appointmentForm())
+                        ->infolist($this->appointmentView())
+                        ->slideOver()
+                        ->modalContent(function (Appointment $record) {
+                            return view('livewire.appointments.view-appointment', ['appointment' => $record]);
+                        }),
                 ]),
             ])
             ->bulkActions([
@@ -143,15 +159,16 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ]);
     }
 
-    public function create(): void
-    {
-        dd($this->form->getState());
-        Appointment::create($this->form->getState());
-    }
-
     public function render(): View
     {
         return view('livewire.appointments.appointment-list');
+    }
+
+    public function appointmentView(): array
+    {
+        return [
+            TextEntry::make('name')
+        ];
     }
 
     public function appointmentForm(): array
@@ -293,5 +310,12 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ])->columns(['xl' => 2]),
         ];
     }
+
+
+//    public static function view(Appointment $record)
+//    {
+////        $this->dispatch('open-modal', id: 'view-appointment');
+//        return ViewAppointment::class;
+//    }
 
 }
