@@ -26,6 +26,7 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,7 +80,6 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
             ->recordAction(ViewAction::class)
             ->defaultSort('created_at', 'desc')
             ->columns([
-
                 TextColumn::make('name')
                     ->searchable()
                     ->toggleable(),
@@ -116,7 +116,11 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                     ->toggleable()
             ])
             ->filters([
-                // ...
+                SelectFilter::make('doctor')
+                    ->relationship('doctor.user', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->native(false)
             ])
             ->actions([
                 ActionGroup::make([
