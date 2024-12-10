@@ -75,6 +75,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
         return $table
             ->query(Doctor::query())
             ->defaultSort('created_at', 'desc')
+            ->recordUrl(fn(Model $record): string => route('doctor.appointment', ['doctor' => $record]))
             ->columns([
                 ImageColumn::make('user.profile_photo_path')
                     ->label('Avatar')
