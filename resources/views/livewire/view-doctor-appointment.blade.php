@@ -1,10 +1,8 @@
 <div>
     <header class="">
         <div class="max-w-7xl mx-auto py-6 px-4 lg:px-8">
-            <div class="flex">
-                <div class="">
-                    {{ $this->doctorAppointmentInfolist }}
-                </div>
+            <div class="">
+                {{ $this->doctorAppointmentInfolist }}
             </div>
         </div>
     </header>

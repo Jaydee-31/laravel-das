@@ -99,6 +99,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                     ->toggleable()
                     ->toggledHiddenByDefault(),
                 TextColumn::make('specialty')
+                    ->label('Specialization')
                     ->searchable()
                     ->toggleable(),
             ])

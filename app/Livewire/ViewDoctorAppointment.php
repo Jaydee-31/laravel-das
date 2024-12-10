@@ -6,15 +6,20 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class ViewDoctorAppointment extends Component implements HasForms, HasInfolists, HasTable
@@ -30,8 +35,36 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
         return $infolist
             ->record($this->doctor)
             ->schema([
-                TextEntry::make('user.name'),
-                TextEntry::make('license_number')
+                \Filament\Infolists\Components\Section::make()
+                    ->schema([
+                        \Filament\Infolists\Components\Grid::make([
+                            'sm' => 2,
+                            'md' => 3,
+                            'lg' => 3,
+                        ])
+                            ->schema([
+                                ImageEntry::make('user.profile_photo_path')
+                                    ->hiddenLabel()
+                                    ->defaultImageUrl(function (?Model $record) {
+                                        return 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->user->name ?? 'User');
+                                    }),
+                                \Filament\Infolists\Components\Group::make([
+                                    \Filament\Infolists\Components\TextEntry::make('user.name')
+                                        ->label('Name'),
+                                    \Filament\Infolists\Components\TextEntry::make('user.email')
+                                        ->label('Email'),
+                                    \Filament\Infolists\Components\TextEntry::make('license_number')
+                                        ->badge()
+                                        ->date()
+                                        ->color('success'),
+                                ]),
+                                \Filament\Infolists\Components\Group::make([
+                                    \Filament\Infolists\Components\TextEntry::make('specialty')
+                                        ->label('Specialization'),
+                                ]),
+
+                            ]),
+                    ]),
             ]);
     }
 
@@ -40,6 +73,8 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
         return $table
             ->query(Appointment::query()->where('doctor_id', '=', $this->doctor->id))
             ->defaultSort('created_at', 'desc')
+            ->recordUrl(null)
+            ->recordAction(ViewAction::class)
             ->columns([
                 TextColumn::make('name')
                     ->searchable()
@@ -76,46 +111,39 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
                     ->searchable()
                     ->toggleable()
             ])
-            ->filters([
-                SelectFilter::make('doctor')
-                    ->relationship('doctor.user', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->native(false)
-            ])
-//            ->actions([
-//                ActionGroup::make([
-//                    \Filament\Tables\Actions\Action::make('sendEmail')
-//                        ->label('Send Email')
-//                        ->url(function (Appointment $record) {
-//                            $to = $record->email;
-//                            $cc = Auth::user()->email;
-//                            $bcc = $record->doctor->user->email;
-//                            $subject = 'RESULTS: ';
-//                            $body = '';
-//
-//                            return "mailto:$to?cc=$cc&bcc=$bcc&subject=$subject&body=$body";
-//                        })
-//                        ->color('success')
-//                        ->icon('heroicon-m-envelope'),
-//                    EditAction::make()
-//                        ->mutateRecordDataUsing(function ($record) {
-//                            $data = $record->toArray();
-//                            return $data;
-//                        })
-//                        ->color('primary')
-//                        ->form($this->appointmentForm()),
-//                    DeleteAction::make(),
-//                    ViewAction::make()
-//                        ->modalHeading('Appointment Details')
-//                        ->form($this->appointmentForm())
+            ->actions([
+                ActionGroup::make([
+                    \Filament\Tables\Actions\Action::make('sendEmail')
+                        ->label('Send Email')
+                        ->url(function (Appointment $record) {
+                            $to = $record->email;
+                            $cc = Auth::user()->email;
+                            $bcc = $record->doctor->user->email;
+                            $subject = 'RESULTS: ';
+                            $body = '';
+
+                            return "mailto:$to?cc=$cc&bcc=$bcc&subject=$subject&body=$body";
+                        })
+                        ->color('success')
+                        ->icon('heroicon-m-envelope'),
+                    EditAction::make()
+                        ->mutateRecordDataUsing(function ($record) {
+                            $data = $record->toArray();
+                            return $data;
+                        })
+                        ->color('primary')
+                        ->form(AppointmentList::appointmentForm()),
+                    DeleteAction::make(),
+                    ViewAction::make()
+                        ->modalHeading('Appointment Details')
+                        ->form(AppointmentList::appointmentForm())
 //                        ->infolist($this->appointmentView())
-//                        ->slideOver()
-//                        ->modalContent(function (Appointment $record) {
-//                            return view('livewire.appointments.view-appointment', ['appointment' => $record]);
-//                        }),
-//                ]),
-//            ])
+                        ->slideOver()
+                        ->modalContent(function (Appointment $record) {
+                            return view('livewire.appointments.view-appointment', ['appointment' => $record]);
+                        }),
+                ]),
+            ])
             ->bulkActions([
                 // ...
             ])

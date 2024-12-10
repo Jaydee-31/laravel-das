@@ -175,7 +175,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
         ];
     }
 
-    public function appointmentForm(): array
+    public static function appointmentForm(): array
     {
         return [
             Group::make([
