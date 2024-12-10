@@ -6,9 +6,11 @@
         <x-responsive-nav-link href="{{ route('appointments') }}" :active="request()->routeIs('appointments')">
             {{ __('Appointments') }}
         </x-responsive-nav-link>
-        <x-responsive-nav-link href="{{ route('doctors') }}" :active="request()->routeIs('doctors')">
+        <x-responsive-nav-link href="{{ route('doctors') }}"
+                               :active="request()->routeIs('doctors') ||  request()->is('doctors/*')">
             {{ __('Doctors') }}
         </x-responsive-nav-link>
+
         <x-responsive-nav-link href="{{ route('users') }}" :active="request()->routeIs('users')">
             {{ __('Users') }}
         </x-responsive-nav-link>
