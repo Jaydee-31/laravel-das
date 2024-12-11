@@ -106,10 +106,6 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
                     ->dateTime('g:i A')
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('doctor.user.name')
-                    ->label('Doctor')
-                    ->searchable()
-                    ->toggleable()
             ])
             ->actions([
                 ActionGroup::make([
