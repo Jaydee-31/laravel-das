@@ -145,10 +145,7 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
                         ->modalHeading('Appointment Details')
                         ->form(AppointmentList::appointmentForm())
 //                        ->infolist($this->appointmentView())
-                        ->slideOver()
-                        ->modalContent(function (Appointment $record) {
-                            return view('livewire.appointments.view-appointment', ['appointment' => $record]);
-                        }),
+                        ->slideOver(),
                 ]),
             ])
             ->bulkActions([
