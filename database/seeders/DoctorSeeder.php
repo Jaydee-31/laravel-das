@@ -78,7 +78,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09778407129',
                 'specialty' => 'Physician',
                 'schedules' => [
-                    ['day' => 'By Appointment', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'By Appointment'],
                 ],
             ],
             [
@@ -127,7 +127,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09653454021',
                 'specialty' => 'Adult Cardiology',
                 'schedules' => [
-                    ['day' => 'By Appointment', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'Saturday'],
                 ],
             ],
             [
@@ -147,7 +147,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09359506196',
                 'specialty' => 'Urology',
                 'schedules' => [
-                    ['day' => 'By Appointment', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'By Appointment'],
                 ],
             ],
             [
@@ -157,7 +157,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09359506196',
                 'specialty' => 'Orthopedics-Spine Surgery',
                 'schedules' => [
-                    ['day' => 'Monday', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'Monday'],
                 ],
             ],
             [
@@ -258,7 +258,7 @@ class DoctorSeeder extends Seeder
                 'contact_number' => '09653454021',
                 'specialty' => 'Orthopedics',
                 'schedules' => [
-                    ['day' => 'Thursday', 'start_time' => '', 'end_time' => ''],
+                    ['day' => 'Thursday', 'start_time' => '14:00:00', 'end_time' => '16:00:00'],
                     ['day' => 'Friday', 'start_time' => '14:00:00', 'end_time' => '16:00:00'],
                 ],
             ],
