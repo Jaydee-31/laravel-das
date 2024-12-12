@@ -14,6 +14,7 @@ class AppointmentsCalendar extends LivewireCalendar
 //    }
     public $openAppointmentModal = false;
     public $appointment;
+    public $selectedStatus = NULL;
 
     public function events(): Collection
     {
@@ -39,6 +40,16 @@ class AppointmentsCalendar extends LivewireCalendar
 
 //        dd($this->appointment->doctor->user->name);
         $this->openAppointmentModal = true;
+        $this->selectedStatus = $this->appointment->status;
+    }
+
+    public function updatedSelectedStatus($status)
+    {
+
+        $this->appointment['status'] = $status;
+        $this->appointment->save();
+//        $this->sizes = Banner::where('name', $banner)->value('sizes');
+//        $this->selectedSize = NULL;
     }
 
     public function cancel()
