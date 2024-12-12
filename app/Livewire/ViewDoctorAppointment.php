@@ -7,6 +7,7 @@ use App\Models\Doctor;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -39,8 +40,8 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
                     ->schema([
                         \Filament\Infolists\Components\Grid::make([
                             'sm' => 2,
-                            'md' => 3,
-                            'lg' => 3,
+                            'md' => 2,
+                            'lg' => 4,
                         ])
                             ->schema([
                                 ImageEntry::make('user.profile_photo_path')
@@ -53,14 +54,24 @@ class ViewDoctorAppointment extends Component implements HasForms, HasInfolists,
                                         ->label('Name'),
                                     \Filament\Infolists\Components\TextEntry::make('user.email')
                                         ->label('Email'),
-                                    \Filament\Infolists\Components\TextEntry::make('license_number')
-                                        ->badge()
-                                        ->date()
-                                        ->color('success'),
+                                    \Filament\Infolists\Components\TextEntry::make('contact_number'),
                                 ]),
                                 \Filament\Infolists\Components\Group::make([
+                                    \Filament\Infolists\Components\TextEntry::make('license_number'),
                                     \Filament\Infolists\Components\TextEntry::make('specialty')
                                         ->label('Specialization'),
+                                ]),
+                                \Filament\Infolists\Components\Group::make([
+                                    ViewEntry::make('schedules')
+                                        ->view('infolists.components.schedules'),
+//                                    RepeatableEntry::make('schedules')
+//                                        ->schema([
+//                                            TextEntry::make('day'),
+//                                            TextEntry::make('week'),
+//                                            TextEntry::make('start_time'),
+//                                            TextEntry::make('start_time'),
+//                                            TextEntry::make('end_time'),
+//                                        ])->contained(false)
                                 ]),
 
                             ]),
