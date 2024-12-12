@@ -127,7 +127,7 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
 //                        dd($record);
                             return array_merge(
                                 $record->user ? $record->user->only(['name', 'username', 'email', 'profile_photo_path']) : [],
-                                $record->only(['id', 'user_id', 'license_number', 'specialty'])
+                                $record->only(['id', 'user_id', 'contact_number', 'license_number', 'specialty'])
                             );
                         })
                         ->mutateFormDataUsing(function (array $data, $record) {
@@ -205,10 +205,15 @@ class DoctorList extends Component implements HasForms, HasTable, HasActions
                             ->required()
                             ->maxLength(255)
                             ->columnSpan(1),
+                        TextInput::make('contact_number')
+                            ->autocomplete(false)
+                            ->required()
+                            ->maxLength(25)
+                            ->columnSpan(1),
                         TextInput::make('license_number')
                             ->label('License Number')
                             ->required()
-                            ->columnSpan(2),
+                            ->columnSpan(1),
                         TextInput::make('specialty')
                             ->label('Specialization')
                             ->required()
