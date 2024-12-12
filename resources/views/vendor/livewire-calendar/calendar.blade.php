@@ -9,6 +9,10 @@
         @includeIf($beforeCalendarView)
     </div>
 
+    @if($openAppointmentModal )
+        @include('livewire.appointment-modal')
+    @endif
+
     <div class="flex rounded-xl overflow-hidden">
         <div class="overflow-x-auto w-full">
             <div class="inline-block min-w-full overflow-hidden">

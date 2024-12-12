@@ -22,7 +22,6 @@ use Filament\Notifications\Notification;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -75,8 +74,7 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
     {
         return $table
             ->query(Appointment::query())
-            ->recordUrl(null)
-            ->recordAction(ViewAction::class)
+            ->recordAction(EditAction::class)
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('name')
@@ -139,14 +137,14 @@ class AppointmentList extends Component implements HasForms, HasTable, HasAction
                         ->color('primary')
                         ->form($this->appointmentForm()),
                     DeleteAction::make(),
-                    ViewAction::make()
-                        ->modalHeading('Appointment Details')
-                        ->form($this->appointmentForm())
-                        ->infolist($this->appointmentView())
-                        ->slideOver()
-                        ->modalContent(function (Appointment $record) {
-                            return view('livewire.appointments.view-appointment', ['appointment' => $record]);
-                        }),
+//                    ViewAction::make()
+//                        ->modalHeading('Appointment Details')
+//                        ->form($this->appointmentForm())
+//                        ->infolist($this->appointmentView())
+//                        ->slideOver()
+//                        ->modalContent(function (Appointment $record) {
+//                            return view('livewire.appointment-modal', ['appointment' => $record]);
+//                        }),
                 ]),
             ])
             ->bulkActions([

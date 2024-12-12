@@ -12,6 +12,8 @@ class AppointmentsCalendar extends LivewireCalendar
 //    {
 //        return view('livewire.appointments-calendar');
 //    }
+    public $openAppointmentModal = false;
+    public $appointment;
 
     public function events(): Collection
     {
@@ -30,4 +32,18 @@ class AppointmentsCalendar extends LivewireCalendar
                 ];
             });
     }
+
+    public function onEventClick($eventId)
+    {
+        $this->appointment = Appointment::find($eventId);
+
+//        dd($this->appointment->doctor->user->name);
+        $this->openAppointmentModal = true;
+    }
+
+    public function cancel()
+    {
+        $this->openAppointmentModal = false;
+    }
+
 }
